@@ -5,20 +5,20 @@ import LoginForm from '../components/LoginForm'
 export default function Login() {
   return (
     <>
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
+    <Box
+        display="flex"
         justifyContent="center"
-        style={{ minHeight: '80vh' }}
       >
-
-        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <Grid
+          container
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ minHeight: '70vh' }}
+        >
           <LoginForm />
-        </Box> 
-        
-      </Grid> 
+        </Grid> 
+    </Box>
     </>
   )
 }
