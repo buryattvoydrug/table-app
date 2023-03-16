@@ -13,21 +13,19 @@ function App() {
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
   )
-  const { authToken } = userLogin
+  const { loginInfo } = userLogin
   
-  console.log(!!authToken)
-
   return (
     <>
     <Router>
-      <Header/>
+      <Header />
       <Container sx={{marginTop: '80px'}}>
         <Routes>
-          <Route path='/' element={!!authToken
+          <Route path='/' element={loginInfo.authToken
                                    ? <Main/>
                                    : <Navigate to="/login"/>
                                    }/>
-          <Route path='/login' element={!!authToken
+          <Route path='/login' element={loginInfo.authToken
                                    ? <Navigate to="/"/>
                                    : <Login/>
                                    }/>

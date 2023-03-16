@@ -23,10 +23,14 @@ export const login = (username: string, password: string): ThunkAction<Promise<v
       if (data.data) {
         dispatch({ 
           type: "LOGIN_SUCCESS",
-          payload: data.data.token,
+          payload: {
+            authToken: data.data.token,
+            username: username,
+          },
          })
   
         localStorage.setItem('authToken', JSON.stringify(data.data.token))
+        localStorage.setItem('userName', JSON.stringify(username))
       } else {
         throw new Error('Ошибка авторизации')
       }
@@ -40,6 +44,10 @@ export const login = (username: string, password: string): ThunkAction<Promise<v
   }
 
 
-export const logout = () => {
+export const logout = (): ThunkAction<Promise<void>, RootState, unknown, AnyAction>  => 
+  async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>) => {
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('userName')
 
-}
+    dispatch({ type: "LOGOUT" })
+  }

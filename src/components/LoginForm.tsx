@@ -17,7 +17,8 @@ export default function LoginForm() {
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
   )
-  const { authToken, isLoading, error } = userLogin
+
+  const { isLoading, error } = userLogin
 
   const loginSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
