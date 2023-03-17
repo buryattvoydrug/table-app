@@ -5,7 +5,7 @@ import './App.css'
 import Header from './components/Header';
 import Login from './pages/Login';
 import Main from './pages/Main';
-import { AuthState } from './redux/reducers/authReduces';
+import { AuthState } from './redux/reducers/authReducers';
 import { RootState } from './redux/store';
 
 function App() {

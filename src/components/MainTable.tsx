@@ -1,55 +1,71 @@
 import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { getTable } from '../redux/actions/tableActions';
+import { AuthState } from '../redux/reducers/authReducers';
+import { DateISO, TableAction, TableState } from '../redux/reducers/tableReducers';
+import { RootState } from '../redux/store';
 
 export default function MainTable() {
+  const userLogin = useSelector<RootState, AuthState>(
+    (state: RootState) => state.userLogin
+  )
+  const tableData = useSelector<RootState, TableState>(
+    (state: RootState) => state.tableData
+  )
+  const { loginInfo } = userLogin
+  const { data } = tableData
+
+  const dispatch = useDispatch<ThunkDispatch<TableState, unknown, TableAction>>()
+  useEffect(() => {
+    if (loginInfo.authToken) {
+      dispatch(getTable(loginInfo.authToken))
+    }
+  }, [loginInfo, dispatch])
+
+  const localDateFromISO = (stringISO: DateISO): string => {
+    const date = new Date(stringISO)
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
+  }
+
   return (
     <>
+    {!!data.length &&
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
+            <TableCell>Дата регистрации компании</TableCell>
+            <TableCell>Название подписи компании</TableCell>
+            <TableCell>Название документа</TableCell>
+            <TableCell>Статус документа</TableCell>
+            <TableCell>Тип документа</TableCell>
+            <TableCell>Номер сотрудника</TableCell>
+            <TableCell>Дата регистрации сотрудника</TableCell>
+            <TableCell>Имя подписи сотрудника</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {data.map((item) => (
             <TableRow
-              key={row.name}
+              key={item.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+              <TableCell>{localDateFromISO(item.companySigDate)}</TableCell>
+              <TableCell>{item.companySignatureName}</TableCell>
+              <TableCell>{item.documentName}</TableCell>
+              <TableCell>{item.documentStatus}</TableCell>
+              <TableCell>{item.documentType}</TableCell>
+              <TableCell>{item.employeeNumber}</TableCell>
+              <TableCell>{localDateFromISO(item.employeeSigDate)}</TableCell>
+              <TableCell>{item.employeeSignatureName}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </TableContainer>}
     </>
   )
 }

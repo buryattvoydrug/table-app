@@ -9,9 +9,9 @@ export interface AuthState {
 
 export interface AuthAction {
   type: string,
-  payload: {
-    username?: string,
-    authToken?: string,
+  payload?: {
+    username: string,
+    authToken: string,
   },
 }
 
@@ -29,8 +29,8 @@ export const authReducer = (state: AuthState = { loginInfo: {} }, action: AuthAc
         error: false,
         isLoading: false,
         loginInfo: {
-          authToken: action.payload.authToken,
-          username: action.payload.username,
+          authToken: action.payload?.authToken,
+          username: action.payload?.username,
         },
       }
     }

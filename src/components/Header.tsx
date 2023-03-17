@@ -3,7 +3,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { AuthState } from '../redux/reducers/authReduces';
+import { AuthState } from '../redux/reducers/authReducers';
 import { logout } from '../redux/actions/authActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';

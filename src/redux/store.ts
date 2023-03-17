@@ -1,10 +1,12 @@
-import { authReducer, AuthState } from "./reducers/authReduces"
+import { authReducer, AuthState } from "./reducers/authReducers"
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from "redux-thunk"
+import { tableReducer } from "./reducers/tableReducers"
 
 const reducers = combineReducers({
   userLogin: authReducer,
+  tableData: tableReducer,
 })
 
 const authTokenFromStorage = localStorage.getItem('authToken')
