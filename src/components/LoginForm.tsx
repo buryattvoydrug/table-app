@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AnyAction } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { login } from '../redux/actions/authActions'
-import { AuthState } from '../redux/reducers/authReduces'
+import { AuthAction, AuthState } from '../redux/reducers/authReducers'
 import { RootState } from '../redux/store'
 
 export default function LoginForm() {
@@ -12,12 +12,13 @@ export default function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const dispatch = useDispatch<ThunkDispatch<RootState, unknown, AnyAction>>()
+  const dispatch = useDispatch<ThunkDispatch<AuthState, unknown, AuthAction>>()
 
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
   )
-  const { authToken, isLoading, error } = userLogin
+
+  const { isLoading, error } = userLogin
 
   const loginSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

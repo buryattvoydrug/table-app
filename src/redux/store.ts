@@ -1,20 +1,30 @@
-import { authReducer } from "./reducers/authReduces"
+import { authReducer, AuthState } from "./reducers/authReducers"
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from "redux-thunk"
+import { tableReducer } from "./reducers/tableReducers"
 
 const reducers = combineReducers({
   userLogin: authReducer,
+  tableData: tableReducer,
 })
 
 const authTokenFromStorage = localStorage.getItem('authToken')
   ? JSON.parse(localStorage.getItem('authToken')!)
   : null
 
-const initialState = {
-  userLogin: { authToken: authTokenFromStorage },
-} as {}
+const usernameFromStorage = localStorage.getItem('userName')
+  ? JSON.parse(localStorage.getItem('userName')!)
+  : null
 
+const initialState = {
+  userLogin: {
+    loginInfo: { 
+      username: usernameFromStorage,
+      authToken: authTokenFromStorage,
+    }
+  },
+} as {}
 
 const middleware = [thunk]
 

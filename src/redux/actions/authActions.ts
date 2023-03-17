@@ -1,10 +1,10 @@
-import { error } from "console"
 import { AnyAction } from "redux"
 import { ThunkAction, ThunkDispatch } from "redux-thunk"
+import { AuthAction, AuthState } from "../reducers/authReducers"
 import { RootState } from "../store"
 
-export const login = (username: string, password: string): ThunkAction<Promise<void>, RootState, unknown, AnyAction> => 
-  async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
+export const login = (username: string, password: string): ThunkAction<Promise<void>, AuthState, unknown, AuthAction> => 
+  async (dispatch: ThunkDispatch<AuthState, unknown, AuthAction>): Promise<void> => {
     try {
       dispatch({ type: "LOGIN_START" })
 
@@ -23,23 +23,28 @@ export const login = (username: string, password: string): ThunkAction<Promise<v
       if (data.data) {
         dispatch({ 
           type: "LOGIN_SUCCESS",
-          payload: data.data.token,
+          payload: {
+            authToken: data.data.token,
+            username: username,
+          },
          })
   
         localStorage.setItem('authToken', JSON.stringify(data.data.token))
+        localStorage.setItem('userName', JSON.stringify(username))
       } else {
         throw new Error('Ошибка авторизации')
       }
     } catch (error) {
-      dispatch({ 
-        type: "LOGIN_FAILURE",
-        payload: error
-      })
+      dispatch({ type: "LOGIN_FAILURE" })
       console.log(error)
     }
   }
 
 
-export const logout = () => {
+export const logout = (): ThunkAction<Promise<void>, RootState, unknown, AnyAction>  => 
+  async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>) => {
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('userName')
 
-}
+    dispatch({ type: "LOGOUT" })
+  }
