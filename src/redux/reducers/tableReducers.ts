@@ -1,21 +1,11 @@
-type TYear         = `${number}${number}${number}${number}`;
-type TMonth        = `${number}${number}`;
-type TDay          = `${number}${number}`;
-type THours        = `${number}${number}`;
-type TMinutes      = `${number}${number}`;
-type TSeconds      = `${number}${number}`;
-type TMilliseconds = `${number}${number}${number}`;
-
-export type DateISO = `${TYear}-${TMonth}-${TDay}T${THours}:${TMinutes}:${TSeconds}.${TMilliseconds}Z`;
-
 export interface TableData {
-  "companySigDate": DateISO,
+  "companySigDate": string,
   "companySignatureName": string,
   "documentName": string,
   "documentStatus": string,
   "documentType": string,
   "employeeNumber": string,
-  "employeeSigDate": DateISO,
+  "employeeSigDate": string,
   "employeeSignatureName": string,
   "id": string,
 }
@@ -45,6 +35,24 @@ export const tableReducer = (state: TableState = { data: [] }, action: TableActi
         error: false,
         isLoading: false,
         data: action.payload,
+      }
+    }
+    case "ADD_TABLE_SUCCESS": {
+      return {
+        ...state,
+        error: false,
+        isLoading: false,
+        data: action.payload?.concat(...state.data)
+      }
+    }
+    case "DELETE_TABLE_SUCCESS": {
+      state.data = state.data.filter((item) => {
+        return item.id !== (action.payload && action.payload[0].id)
+      })
+      return {
+        ...state,
+        error: false,
+        isLoading: false,
       }
     }
     case "GET_TABLE_FAILURE": {

@@ -23,7 +23,7 @@ export default function Header() {
   }
 
   return (
-    <AppBar position="fixed" color="transparent">
+    <AppBar position="fixed" sx={{ background: "#fff" }}>
         <Toolbar>
           <Container style={{
               display: 'flex', 
@@ -31,7 +31,7 @@ export default function Header() {
               alignItems: 'center'
             }}>
             <Link to="/">
-              <IconButton edge="start" color="inherit">
+              <IconButton edge="start" color="primary">
                 Table App
               </IconButton>
             </Link>

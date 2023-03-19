@@ -1,38 +1,50 @@
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-import { useEffect } from 'react';
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Button, TextField, Stack, Snackbar, Alert } from '@mui/material'
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { getTable } from '../redux/actions/tableActions';
+import { addRowToTable, deleteRowFromTable, getTable } from '../redux/actions/tableActions';
 import { AuthState } from '../redux/reducers/authReducers';
-import { DateISO, TableAction, TableState } from '../redux/reducers/tableReducers';
+import { TableAction, TableData, TableState } from '../redux/reducers/tableReducers';
 import { RootState } from '../redux/store';
+import NewRow from './NewRow';
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete';
+import ErrorAlert from './ErrorAlert';
 
 export default function MainTable() {
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
   )
+  const { loginInfo } = userLogin
+
   const tableData = useSelector<RootState, TableState>(
     (state: RootState) => state.tableData
   )
-  const { loginInfo } = userLogin
   const { data } = tableData
 
   const dispatch = useDispatch<ThunkDispatch<TableState, unknown, TableAction>>()
+
   useEffect(() => {
     if (loginInfo.authToken) {
       dispatch(getTable(loginInfo.authToken))
     }
+    
   }, [loginInfo, dispatch])
 
-  const localDateFromISO = (stringISO: DateISO): string => {
+  const localDateFromISO = (stringISO: string): string => {
     const date = new Date(stringISO)
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
   }
 
+  const handleDeleteRow = (rowObj: TableData) => {
+    console.log(rowObj)
+    if (rowObj && loginInfo.authToken) {
+      dispatch(deleteRowFromTable(rowObj, loginInfo.authToken))
+    }
+  }
+
   return (
     <>
-    {!!data.length &&
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -45,6 +57,7 @@ export default function MainTable() {
             <TableCell>Номер сотрудника</TableCell>
             <TableCell>Дата регистрации сотрудника</TableCell>
             <TableCell>Имя подписи сотрудника</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,11 +74,31 @@ export default function MainTable() {
               <TableCell>{item.employeeNumber}</TableCell>
               <TableCell>{localDateFromISO(item.employeeSigDate)}</TableCell>
               <TableCell>{item.employeeSignatureName}</TableCell>
+              <TableCell>
+                <Stack direction="row" spacing={1}>
+                  {/* <Button 
+                    variant="outlined" 
+                  >
+                    <EditIcon/>
+                  </Button> */}
+                  <Button 
+                    variant="outlined"
+                    color="warning" 
+                    onClick={()=> handleDeleteRow(item)}
+                  >
+                    <DeleteIcon/>
+                  </Button>
+                </Stack>
+              </TableCell>
             </TableRow>
           ))}
+
+          <NewRow/>
+
         </TableBody>
       </Table>
-    </TableContainer>}
+    </TableContainer>
+
     </>
   )
 }
