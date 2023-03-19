@@ -7,9 +7,7 @@ import { AuthState } from '../redux/reducers/authReducers';
 import { TableAction, TableData, TableState } from '../redux/reducers/tableReducers';
 import { RootState } from '../redux/store';
 import NewRow from './NewRow';
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete';
-import ErrorAlert from './ErrorAlert';
+import Row from './Row';
 
 export default function MainTable() {
   const userLogin = useSelector<RootState, AuthState>(
@@ -31,18 +29,6 @@ export default function MainTable() {
     
   }, [loginInfo, dispatch])
 
-  const localDateFromISO = (stringISO: string): string => {
-    const date = new Date(stringISO)
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
-  }
-
-  const handleDeleteRow = (rowObj: TableData) => {
-    console.log(rowObj)
-    if (rowObj && loginInfo.authToken) {
-      dispatch(deleteRowFromTable(rowObj, loginInfo.authToken))
-    }
-  }
-
   return (
     <>
     <TableContainer>
@@ -62,35 +48,7 @@ export default function MainTable() {
         </TableHead>
         <TableBody>
           {data.map((item) => (
-            <TableRow
-              key={item.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell>{localDateFromISO(item.companySigDate)}</TableCell>
-              <TableCell>{item.companySignatureName}</TableCell>
-              <TableCell>{item.documentName}</TableCell>
-              <TableCell>{item.documentStatus}</TableCell>
-              <TableCell>{item.documentType}</TableCell>
-              <TableCell>{item.employeeNumber}</TableCell>
-              <TableCell>{localDateFromISO(item.employeeSigDate)}</TableCell>
-              <TableCell>{item.employeeSignatureName}</TableCell>
-              <TableCell>
-                <Stack direction="row" spacing={1}>
-                  {/* <Button 
-                    variant="outlined" 
-                  >
-                    <EditIcon/>
-                  </Button> */}
-                  <Button 
-                    variant="outlined"
-                    color="warning" 
-                    onClick={()=> handleDeleteRow(item)}
-                  >
-                    <DeleteIcon/>
-                  </Button>
-                </Stack>
-              </TableCell>
-            </TableRow>
+            <Row key={item.id} data={item}/>
           ))}
 
           <NewRow/>

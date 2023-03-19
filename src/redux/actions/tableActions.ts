@@ -105,3 +105,38 @@ export const deleteRowFromTable = (rowObj: TableData, authToken: string): ThunkA
       })
     }
   }
+
+  export const updateRowTable = (rowObj: TableData, authToken: string): ThunkAction<Promise<void>, TableState, unknown, TableAction> => 
+  async (dispatch: ThunkDispatch<TableState, unknown, TableAction>): Promise<void> => {
+    try {
+      dispatch({ type: "START_GET_TABLE" })
+
+      const response = await fetch(`${process.env.REACT_APP_HOST}/ru/data/v3/testmethods/docs/userdocs/set/${rowObj.id}`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-auth': authToken,
+         },
+         body: JSON.stringify(rowObj),
+      });
+
+      const data = await response.json()
+
+      if (data.error_message === "OK") {
+        dispatch({ 
+          type: "UPDATE_TABLE_SUCCESS",
+          payload: [rowObj],
+         })
+  
+      } else {
+        throw new Error('Ошибка')
+      }
+      console.log(data)
+
+    } catch (error) {
+      dispatch({ 
+        type: "GET_TABLE_FAILURE",
+      })
+    }
+  }

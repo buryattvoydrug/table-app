@@ -42,12 +42,24 @@ export const tableReducer = (state: TableState = { data: [] }, action: TableActi
         ...state,
         error: false,
         isLoading: false,
-        data: action.payload?.concat(...state.data)
+        data: state.data.concat(action.payload || [])
       }
     }
     case "DELETE_TABLE_SUCCESS": {
       state.data = state.data.filter((item) => {
         return item.id !== (action.payload && action.payload[0].id)
+      })
+      return {
+        ...state,
+        error: false,
+        isLoading: false,
+      }
+    }
+    case "UPDATE_TABLE_SUCCESS": {
+      state.data = state.data.map((item) => {
+        if (action.payload && item.id === action.payload[0].id) {
+          return action.payload[0]
+        } else return item
       })
       return {
         ...state,

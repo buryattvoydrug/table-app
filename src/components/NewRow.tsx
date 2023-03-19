@@ -13,7 +13,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs'
 
-const INITIAL_ROW_STATE: TableData = {
+export const INITIAL_ROW_STATE: TableData = {
   id: uuid(),
   companySigDate: dayjs(Date.now()).toISOString(), 
   companySignatureName: "",
