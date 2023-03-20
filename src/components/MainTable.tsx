@@ -1,14 +1,18 @@
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-import { useEffect } from 'react';
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Button, CircularProgress } from '@mui/material'
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getTable } from '../redux/actions/tableActions';
+import ReplayIcon from '@mui/icons-material/Replay';
 import { AuthState } from '../redux/reducers/authReducers';
-import { DateISO, TableAction, TableState } from '../redux/reducers/tableReducers';
+import { TableAction, TableState } from '../redux/reducers/tableReducers';
 import { RootState } from '../redux/store';
 
+import ErrorAlert from './ErrorAlert';
+import TableRows from './TableRows';
+
 export default function MainTable() {
+
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
   )
@@ -16,25 +20,30 @@ export default function MainTable() {
     (state: RootState) => state.tableData
   )
   const { loginInfo } = userLogin
-  const { data } = tableData
+  const { data, isLoading } = tableData
 
   const dispatch = useDispatch<ThunkDispatch<TableState, unknown, TableAction>>()
+  const [reloadTable, setReloadTable] = useState(false)
+
   useEffect(() => {
     if (loginInfo.authToken) {
       dispatch(getTable(loginInfo.authToken))
     }
-  }, [loginInfo, dispatch])
-
-  const localDateFromISO = (stringISO: DateISO): string => {
-    const date = new Date(stringISO)
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
-  }
+  }, [reloadTable, loginInfo, dispatch])
 
   return (
     <>
-    {!!data.length &&
+    <Button 
+      disabled={isLoading}
+      color="primary" 
+      variant="outlined"
+      sx={{ height: "30px" }}
+      onClick={() => setReloadTable(prev => !prev)}
+    >
+      <ReplayIcon />
+    </Button>
     <TableContainer>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 650, marginBottom: 25 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Дата регистрации компании</TableCell>
@@ -45,27 +54,15 @@ export default function MainTable() {
             <TableCell>Номер сотрудника</TableCell>
             <TableCell>Дата регистрации сотрудника</TableCell>
             <TableCell>Имя подписи сотрудника</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((item) => (
-            <TableRow
-              key={item.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell>{localDateFromISO(item.companySigDate)}</TableCell>
-              <TableCell>{item.companySignatureName}</TableCell>
-              <TableCell>{item.documentName}</TableCell>
-              <TableCell>{item.documentStatus}</TableCell>
-              <TableCell>{item.documentType}</TableCell>
-              <TableCell>{item.employeeNumber}</TableCell>
-              <TableCell>{localDateFromISO(item.employeeSigDate)}</TableCell>
-              <TableCell>{item.employeeSignatureName}</TableCell>
-            </TableRow>
-          ))}
+          <TableRows data={data}/>
         </TableBody>
       </Table>
-    </TableContainer>}
+    </TableContainer>
+    <ErrorAlert />
     </>
   )
 }

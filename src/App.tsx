@@ -19,7 +19,7 @@ function App() {
     <>
     <Router>
       <Header />
-      <Container sx={{marginTop: '80px'}}>
+      <Container sx={{marginTop: '80px'}} maxWidth="xl">
         <Routes>
           <Route path='/' element={loginInfo.authToken
                                    ? <Main/>

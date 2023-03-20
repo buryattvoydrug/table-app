@@ -6,7 +6,7 @@ import { RootState } from "../store"
 export const login = (username: string, password: string): ThunkAction<Promise<void>, AuthState, unknown, AuthAction> => 
   async (dispatch: ThunkDispatch<AuthState, unknown, AuthAction>): Promise<void> => {
     try {
-      dispatch({ type: "LOGIN_START" })
+      dispatch({ type: "LOGIN_START", payload: {} })
 
       const response = await fetch(`${process.env.REACT_APP_HOST}/ru/data/v3/testmethods/docs/login`, {
         method: 'POST',
@@ -26,17 +26,22 @@ export const login = (username: string, password: string): ThunkAction<Promise<v
           payload: {
             authToken: data.data.token,
             username: username,
+            error: data.error_message,
           },
          })
   
         localStorage.setItem('authToken', JSON.stringify(data.data.token))
         localStorage.setItem('userName', JSON.stringify(username))
       } else {
-        throw new Error('Ошибка авторизации')
+        throw new Error(data.error_code + ' ' + data.error_text);
       }
-    } catch (error) {
-      dispatch({ type: "LOGIN_FAILURE" })
-      console.log(error)
+    } catch (e) {
+      dispatch({ 
+        type: "LOGIN_FAILURE",
+        payload: {
+          error: (e as Error).message,
+        },
+      })
     }
   }
 

@@ -1,4 +1,4 @@
-import { AppBar, Avatar, Box, Button, Container, IconButton, Toolbar } from '@mui/material'
+import { AppBar, Avatar, Box, Button, Container, IconButton, LinearProgress, Toolbar } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login';
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,13 +7,18 @@ import { AuthState } from '../redux/reducers/authReducers';
 import { logout } from '../redux/actions/authActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
+import { TableState } from '../redux/reducers/tableReducers';
 
 export default function Header() {
 
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
   )
+  const tableData = useSelector<RootState, TableState>(
+    (state: RootState) => state.tableData
+  )
   const { loginInfo } = userLogin
+  const { isLoading } = tableData
 
   const dispatch = useDispatch<ThunkDispatch<RootState, unknown, AnyAction>>()
 
@@ -23,15 +28,24 @@ export default function Header() {
   }
 
   return (
-    <AppBar position="fixed" color="transparent">
+    <AppBar position="fixed" sx={{ background: "#fff" }}>
+        {isLoading && 
+          <LinearProgress 
+            sx={{
+              position: "fixed",
+              width: "100%",
+            }} 
+        />}
         <Toolbar>
           <Container style={{
               display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'center'
-            }}>
+            }}
+              maxWidth="xl"
+          >
             <Link to="/">
-              <IconButton edge="start" color="inherit">
+              <IconButton edge="start" color="primary">
                 Table App
               </IconButton>
             </Link>
