@@ -1,7 +1,7 @@
 import { Button, Stack, TableCell, TableRow, TextField } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
-import { addRowToTable, deleteRowFromTable, updateRowTable } from '../redux/actions/tableActions'
+import { addRowToTable, deleteRowFromTable, updateRowTable, customAlert } from '../redux/actions/tableActions'
 import { AuthState } from '../redux/reducers/authReducers'
 import { TableAction, TableData, TableState } from '../redux/reducers/tableReducers'
 import { RootState } from '../redux/store'
@@ -19,13 +19,30 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
   )
+  const tableData = useSelector<RootState, TableState>(
+    (state: RootState) => state.tableData
+  )
   const { loginInfo } = userLogin
+  const { isLoading } = tableData
+
   const dispatch = useDispatch<ThunkDispatch<TableState, unknown, TableAction>>()
 
   const [rowObj, setRowObj] = useState<TableData>(data)
+  const [isValid, setValid] = useState<boolean>(true)
   const [companySigDate, setCompanySigDate] = React.useState<Dayjs>(dayjs(rowObj.companySigDate));
   const [employeeSigDate, setEmployeeSigDate] = React.useState<Dayjs>(dayjs(rowObj.employeeSigDate));
   
+  useEffect(() => {
+    if (!rowObj) {
+      setValid(false)
+    } else {
+      const hasEmpty = Object.values(rowObj)
+                             .some(item => item === "")
+      setValid(!hasEmpty)
+    }
+
+  }, [rowObj])
+
   useEffect(() => {
     if (companySigDate?.isValid()) {
       setRowObj((prev) => {
@@ -46,22 +63,25 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
   }, [companySigDate, employeeSigDate])
 
   const handleDeleteRow = () => {
-    console.log(rowObj)
-    if (rowObj && loginInfo.authToken) {
+    if (loginInfo.authToken) {
       dispatch(deleteRowFromTable(rowObj, loginInfo.authToken))
     }
   }
 
   const handleUpdateRow = () => {
-    console.log(rowObj)
-    if (rowObj && loginInfo.authToken) {
+    if (!isValid) {
+      dispatch(customAlert('Заполните все поля!'))
+    }
+    if (isValid && loginInfo.authToken) {
       dispatch(updateRowTable(rowObj, loginInfo.authToken))
     }
   }
   
   const handleAddRow = () => {
-    console.log(rowObj)
-    if (rowObj && loginInfo.authToken) {
+    if (!isValid) {
+      dispatch(customAlert('Заполните все поля!'))
+    }
+    if (isValid && loginInfo.authToken) {
       dispatch(addRowToTable(rowObj, loginInfo.authToken))
       setRowObj(data)
     }
@@ -85,6 +105,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
         </TableCell>
         <TableCell sx={{padding: "10px 5px 10px 0"}}>
           <TextField
+            required
             value={rowObj.companySignatureName}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setRowObj((prev) => {
@@ -98,6 +119,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
         </TableCell>
         <TableCell sx={{padding: "10px 5px 10px 0"}}>
           <TextField
+            required
             value={rowObj.documentName}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setRowObj((prev) => {
@@ -111,6 +133,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
         </TableCell>
         <TableCell sx={{padding: "10px 5px 10px 0"}}>
           <TextField
+            required
             value={rowObj.documentStatus}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setRowObj((prev) => {
@@ -124,6 +147,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
         </TableCell>
         <TableCell sx={{padding: "10px 5px 10px 0"}}>
           <TextField
+            required
             value={rowObj.documentType}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setRowObj((prev) => {
@@ -137,6 +161,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
         </TableCell>
         <TableCell sx={{padding: "10px 5px 10px 0"}}>
           <TextField
+            required
             value={rowObj.employeeNumber}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setRowObj((prev) => {
@@ -161,6 +186,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
         </TableCell>
         <TableCell sx={{padding: "10px 5px 10px 0"}}>
           <TextField
+            required
             value={rowObj.employeeSignatureName}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setRowObj((prev) => {
@@ -177,21 +203,38 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
             <Button 
               variant="outlined"
               color="primary" 
-              onClick={newRow
-                        ? handleAddRow
-                        : handleUpdateRow}
+              onClick={() => setRowObj(data)}
             >
-              {newRow
-                        ? <CheckIcon />
-                        : <SyncIcon />}
+              {newRow? "CLEAR" : "UNDO"}
             </Button>
-            {!newRow && <Button 
-              variant="outlined"
-              color="warning" 
-              onClick={handleDeleteRow}
-            >
-              <DeleteIcon/>
-            </Button>}
+            {!newRow  
+              ? <>
+                  <Button 
+                    disabled={isLoading || !isValid}
+                    variant="outlined"
+                    color="primary" 
+                    onClick={handleUpdateRow}
+                  >
+                    <SyncIcon />
+                  </Button>
+                  <Button 
+                    disabled={isLoading}
+                    variant="outlined"
+                    color="warning" 
+                    onClick={handleDeleteRow}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </>
+              : <Button 
+                  disabled={isLoading || !isValid}
+                  variant="outlined"
+                  color="primary" 
+                  onClick={handleAddRow}
+                >
+                  <CheckIcon />
+                </Button>
+            }
           </Stack>
         </TableCell>
       </TableRow>

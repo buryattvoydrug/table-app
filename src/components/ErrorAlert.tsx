@@ -1,9 +1,10 @@
-import { Snackbar } from '@mui/material';
-import React from 'react'
+import { IconButton, Snackbar } from '@mui/material';
+import React, { useEffect } from 'react'
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { TableState } from '../redux/reducers/tableReducers';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -13,26 +14,53 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 export default function ErrorAlert() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
 
-  // const handleClick = () => {
-    // setOpen(true);
-  // };
+  const tableData = useSelector<RootState, TableState>(
+    (state: RootState) => state.tableData
+  )
 
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
+  const { isLoading, error } = tableData
+
+  useEffect(() => {
+    setOpen(!!error)
+  }, [error, isLoading])
+
+  const alertColor = (errStr: string) => {
+    switch (errStr[0] || '') {
+      case "4": {
+        return "error"
+      }
+      case "2": {
+        return "success"
+      }
+      default: {
+        return "info"
+      }
     }
-
-    setOpen(false);
-  };
+  }
 
   return (
     <>
-      <Snackbar open={open} autoHideDuration={10000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          This is a success message!
-        </Alert>
+      <Snackbar open={open} autoHideDuration={10000}>
+          <Alert
+            severity={alertColor(error || '')}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            {error}
+          </Alert>
       </Snackbar>
     </>
   )
