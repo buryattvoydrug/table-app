@@ -12,7 +12,7 @@ export interface TableData {
 
 export interface TableState {
   isLoading?: boolean,
-  error?: boolean,
+  error?: string,
   data: TableData[],
 }
 

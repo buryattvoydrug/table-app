@@ -1,7 +1,6 @@
-import { Alert, Avatar, Box, Button, CircularProgress, Grid, Stack, TextField, Typography } from '@mui/material'
-import { ChangeEvent, useState } from 'react'
+import { Alert, Avatar, Box, Button, CircularProgress, TextField, Typography } from '@mui/material'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { AnyAction } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { login } from '../redux/actions/authActions'
 import { AuthAction, AuthState } from '../redux/reducers/authReducers'
@@ -80,7 +79,7 @@ export default function LoginForm() {
             Войти
           </Button>
           {error && <Alert sx={{marginTop: 1}} severity="error">
-            Ошибка авторизации
+            {error}
           </Alert>}
           {isLoading && <Box
             display="flex"

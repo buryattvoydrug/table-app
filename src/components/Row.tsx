@@ -1,11 +1,12 @@
 import { Button, Stack, TableCell, TableRow, TextField } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
-import { deleteRowFromTable, updateRowTable } from '../redux/actions/tableActions'
+import { addRowToTable, deleteRowFromTable, updateRowTable } from '../redux/actions/tableActions'
 import { AuthState } from '../redux/reducers/authReducers'
 import { TableAction, TableData, TableState } from '../redux/reducers/tableReducers'
 import { RootState } from '../redux/store'
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 import SyncIcon from '@mui/icons-material/Sync';
 import { useEffect, useState } from 'react'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
@@ -13,7 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 
-export default function Row({data}: {data: TableData}) {
+export default function Row({data, newRow}: {data: TableData, newRow?: boolean}) {
 
   const userLogin = useSelector<RootState, AuthState>(
     (state: RootState) => state.userLogin
@@ -22,8 +23,8 @@ export default function Row({data}: {data: TableData}) {
   const dispatch = useDispatch<ThunkDispatch<TableState, unknown, TableAction>>()
 
   const [rowObj, setRowObj] = useState<TableData>(data)
-  const [companySigDate, setCompanySigDate] = React.useState<Dayjs>(dayjs(data.companySigDate));
-  const [employeeSigDate, setEmployeeSigDate] = React.useState<Dayjs>(dayjs(data.employeeSigDate));
+  const [companySigDate, setCompanySigDate] = React.useState<Dayjs>(dayjs(rowObj.companySigDate));
+  const [employeeSigDate, setEmployeeSigDate] = React.useState<Dayjs>(dayjs(rowObj.employeeSigDate));
   
   useEffect(() => {
     if (companySigDate?.isValid()) {
@@ -55,6 +56,14 @@ export default function Row({data}: {data: TableData}) {
     console.log(rowObj)
     if (rowObj && loginInfo.authToken) {
       dispatch(updateRowTable(rowObj, loginInfo.authToken))
+    }
+  }
+  
+  const handleAddRow = () => {
+    console.log(rowObj)
+    if (rowObj && loginInfo.authToken) {
+      dispatch(addRowToTable(rowObj, loginInfo.authToken))
+      setRowObj(data)
     }
   }
 
@@ -168,17 +177,21 @@ export default function Row({data}: {data: TableData}) {
             <Button 
               variant="outlined"
               color="primary" 
-              onClick={handleUpdateRow}
+              onClick={newRow
+                        ? handleAddRow
+                        : handleUpdateRow}
             >
-              <SyncIcon/>
+              {newRow
+                        ? <CheckIcon />
+                        : <SyncIcon />}
             </Button>
-            <Button 
+            {!newRow && <Button 
               variant="outlined"
               color="warning" 
               onClick={handleDeleteRow}
             >
               <DeleteIcon/>
-            </Button>
+            </Button>}
           </Stack>
         </TableCell>
       </TableRow>

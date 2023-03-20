@@ -1,6 +1,6 @@
 export interface AuthState {
   isLoading?: boolean,
-  error?: boolean,
+  error?: string,
   loginInfo: {
     username?: string,
     authToken?: string,
@@ -9,9 +9,10 @@ export interface AuthState {
 
 export interface AuthAction {
   type: string,
-  payload?: {
-    username: string,
-    authToken: string,
+  payload: {
+    username?: string,
+    authToken?: string,
+    error?: string,
   },
 }
 
@@ -26,7 +27,7 @@ export const authReducer = (state: AuthState = { loginInfo: {} }, action: AuthAc
     case "LOGIN_SUCCESS": {
       return {
         ...state,
-        error: false,
+        error: action.payload?.error,
         isLoading: false,
         loginInfo: {
           authToken: action.payload?.authToken,
@@ -38,12 +39,13 @@ export const authReducer = (state: AuthState = { loginInfo: {} }, action: AuthAc
       return {
         ...state,
         isLoading: false,
-        error: true,
+        error: action.payload?.error,
       }
     }
     case "LOGOUT": {
       return {
         ...state,
+        error: action.payload?.error,
         loginInfo: {}
       }
     }

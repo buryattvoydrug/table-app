@@ -29,7 +29,9 @@ export default function Header() {
               display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'center'
-            }}>
+            }}
+              maxWidth="xl"
+          >
             <Link to="/">
               <IconButton edge="start" color="primary">
                 Table App
