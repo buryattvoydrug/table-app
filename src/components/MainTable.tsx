@@ -1,4 +1,4 @@
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Button, CircularProgress } from '@mui/material'
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material'
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -7,7 +7,6 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import { AuthState } from '../redux/reducers/authReducers';
 import { TableAction, TableState } from '../redux/reducers/tableReducers';
 import { RootState } from '../redux/store';
-
 import ErrorAlert from './ErrorAlert';
 import TableRows from './TableRows';
 
@@ -42,8 +41,8 @@ export default function MainTable() {
     >
       <ReplayIcon />
     </Button>
-    <TableContainer>
-      <Table sx={{ minWidth: 650, marginBottom: 25 }} aria-label="simple table">
+    <TableContainer sx={{ maxHeight: "85vh" }}>
+      <Table sx={{ minWidth: 650, marginBottom: 10 }} stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
             <TableCell>Дата регистрации компании</TableCell>

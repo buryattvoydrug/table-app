@@ -33,6 +33,10 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
   const [employeeSigDate, setEmployeeSigDate] = React.useState<Dayjs>(dayjs(rowObj.employeeSigDate));
   
   useEffect(() => {
+    setRowObj(data)
+  }, [data])
+
+  useEffect(() => {
     if (!rowObj) {
       setValid(false)
     } else {
@@ -201,6 +205,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
         <TableCell>
           <Stack direction="row" spacing={1}>
             <Button 
+              disabled={JSON.stringify(data) === JSON.stringify(rowObj)}
               variant="outlined"
               color="primary" 
               onClick={() => setRowObj(data)}
@@ -210,7 +215,7 @@ export default function Row({data, newRow}: {data: TableData, newRow?: boolean})
             {!newRow  
               ? <>
                   <Button 
-                    disabled={isLoading || !isValid}
+                    disabled={isLoading || !isValid || JSON.stringify(data) === JSON.stringify(rowObj)}
                     variant="outlined"
                     color="primary" 
                     onClick={handleUpdateRow}
