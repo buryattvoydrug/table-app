@@ -21,12 +21,12 @@ function App() {
       <Header />
       <Container sx={{marginTop: '80px'}} maxWidth="xl">
         <Routes>
-          <Route path='/' element={loginInfo.authToken
+          <Route path='/table-app/' element={loginInfo.authToken
                                    ? <Main/>
-                                   : <Navigate to="/login"/>
+                                   : <Navigate to="/table-app/login"/>
                                    }/>
-          <Route path='/login' element={loginInfo.authToken
-                                   ? <Navigate to="/"/>
+          <Route path='/table-app/login' element={loginInfo.authToken
+                                   ? <Navigate to="/table-app/"/>
                                    : <Login/>
                                    }/>
         </Routes>

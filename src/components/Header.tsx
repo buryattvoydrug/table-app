@@ -44,7 +44,7 @@ export default function Header() {
             }}
               maxWidth="xl"
           >
-            <Link to="/">
+            <Link to="/table-app/">
               <IconButton edge="start" color="primary">
                 Table App
               </IconButton>
@@ -54,7 +54,7 @@ export default function Header() {
               display="flex"
               alignItems="center"
             >
-              <Link to="/login">
+              <Link to="/table-app/login">
                 <Button 
                   variant="outlined" 
                   endIcon={<LoginIcon />}
